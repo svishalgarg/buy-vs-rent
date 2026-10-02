@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buy a house or rent? · India calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF3F1; --panel:#FFFFFF; --ink:#13263B; --muted:#56687A; --line:#C9D6D2; --soft:#E2EBE8;
+  --accent:#1D4E89; --good:#1A7F5A; --bad:#B23A3A; --warn:#9A6400;
+  --c-loan:#1D4E89; --c-cash:#7A4BB0; --c-fd:#1A7F5A; --c-rd:#B7791F;
+  --chip:#FFF4D6; --chip-ink:#7A5200;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Public Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1920; --panel:#15232C; --ink:#E5EEF0; --muted:#9AB0B8; --line:#2A3C46; --soft:#1C2D37;
+    --accent:#7FB0EA; --good:#4FC59A; --bad:#EE7C7C; --warn:#E3B04B;
+    --c-loan:#6FA3E0; --c-cash:#B591E6; --c-fd:#4FC59A; --c-rd:#E3A94B;
+    --chip:#3A3015; --chip-ink:#F2D58A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1920; --panel:#15232C; --ink:#E5EEF0; --muted:#9AB0B8; --line:#2A3C46; --soft:#1C2D37;
+  --accent:#7FB0EA; --good:#4FC59A; --bad:#EE7C7C; --warn:#E3B04B;
+  --c-loan:#6FA3E0; --c-cash:#B591E6; --c-fd:#4FC59A; --c-rd:#E3A94B;
+  --chip:#3A3015; --chip-ink:#F2D58A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 18px 56px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.4vw,44px);line-height:1.08;letter-spacing:-.02em;margin:0 0 8px}
+.intro{color:var(--muted);margin:0 0 22px;max-width:60ch}
+h2{font-family:var(--display);font-weight:700;font-size:21px;margin:0 0 10px}
+.layout{display:grid;grid-template-columns:minmax(290px,360px) 1fr;gap:26px;align-items:start}
+@media (max-width:880px){.layout{grid-template-columns:1fr}}
+@media (min-width:881px){.inputs{position:sticky;top:12px}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+
+/* inputs */
+.banner{background:var(--chip);color:var(--chip-ink);border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:14px}
+.banner .acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid currentColor;background:transparent;color:inherit;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600}
+.f{margin-bottom:13px}
+.f label{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:600;margin-bottom:4px}
+.sample{font-weight:600;font-size:11px;background:var(--chip);color:var(--chip-ink);border-radius:999px;padding:1px 8px;white-space:nowrap;align-self:center}
+.f.edited .sample{display:none}
+.inp{display:flex;border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+.inp:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+.inp span{padding:8px 10px;color:var(--muted);font-size:14px;background:var(--soft);display:flex;align-items:center}
+.inp input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;padding:8px 10px;font-variant-numeric:tabular-nums}
+.inp input:focus{outline:none}
+.f.err .inp{border-color:var(--bad)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);align-items:stretch;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--bg);color:var(--ink);padding:8px 4px;line-height:1.25;font-size:13.5px;font-weight:600}
+.seg2{grid-template-columns:repeat(2,1fr)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--panel)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.check input{margin-top:4px;accent-color:var(--accent)}
+.hide{display:none}
+details.more{border-top:1px solid var(--line);margin-top:6px;padding-top:12px}
+summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:16px}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+details[open]>summary{margin-bottom:12px}
+
+/* results */
+.results{display:flex;flex-direction:column;gap:20px;min-width:0}
+.answer{border:2px solid var(--ink)}
+.answer .label{font-size:14px;color:var(--muted);margin:0}
+.answer .pick{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.6vw,46px);line-height:1.05;letter-spacing:-.02em;margin:2px 0 10px}
+.answer p{margin:0 0 8px;max-width:62ch;font-size:16.5px}
+.answer .alt{border-top:1px solid var(--line);padding-top:10px;margin-top:10px;font-size:15.5px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:620px){.grid{grid-template-columns:1fr}}
+.opt{background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:16px}
+.opt.best{outline:2px solid var(--c);outline-offset:-1px}
+.opt h3{font-family:var(--display);font-weight:700;font-size:18px;margin:0;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.badge{font-family:var(--body);font-size:12px;font-weight:600;background:var(--c);color:var(--panel);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.opt .what{font-size:13.5px;color:var(--muted);margin:3px 0 12px;min-height:2.8em}
+.line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.line span:first-child{color:var(--muted)}
+.res{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:2px solid var(--ink);margin-top:4px;padding-top:8px}
+.res b{font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.howread{font-size:14px;color:var(--muted);margin:0}
+.tips ul{margin:0;padding-left:20px;max-width:66ch}
+.tips li{margin-bottom:8px}
+.tips .flag{color:var(--warn)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:170px}
+thead th{font-family:var(--display);font-size:14px;border-bottom:2px solid var(--ink);vertical-align:bottom}
+.chart{position:relative;margin-bottom:14px}
+.chart svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;display:none;min-width:200px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.tip div{display:flex;gap:10px;justify-content:space-between}
+.keys{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px}
+.keys span::before{content:"";display:inline-block;width:14px;height:3px;background:var(--k);margin-right:6px;vertical-align:middle}
+.small{font-size:13.5px;color:var(--muted)}
+.small li{margin-bottom:6px}
+footer{margin-top:26px;font-size:12.5px;color:var(--muted);max-width:76ch}
+/* breakdown + prepay */
+.section-intro{color:var(--muted);font-size:14.5px;margin:-4px 0 14px;max-width:64ch}
+table.bd td,table.bd th{vertical-align:middle}
+table.bd td:nth-child(2){width:150px}
+table.bd .grp td{font-family:var(--display);font-weight:700;font-size:15px;padding-top:16px;border-bottom:2px solid var(--line);background:transparent}
+table.bd .sub{display:block;font-size:12px;color:var(--muted);font-weight:400;line-height:1.35}
+table.bd .tot td{font-weight:700;border-top:2px solid var(--ink);font-size:15px}
+table.bd .tot2 td{font-weight:600}
+table.bd .na{color:var(--muted)}
+.mini{display:flex;align-items:center;gap:6px;margin:0}
+.mini .inp{width:120px}
+.mini .inp input{padding:6px 8px;text-align:right}
+.mini .inp span{padding:6px 7px;font-size:13px}
+.mini .sample{font-size:10px;padding:1px 6px}
+.mini.err .inp{border-color:var(--bad)}
+.takeaway{margin:14px 0 0;padding:12px 14px;background:var(--soft);border-radius:10px;max-width:70ch}
+.ppin{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.ppin .f{min-width:0}
+.ppin .f label{flex-wrap:wrap}
+.ppin .inp{width:100%}
+.big{font-family:var(--display);font-weight:700;font-size:clamp(21px,2.6vw,27px);line-height:1.25;margin:6px 0 14px;max-width:34ch}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px}
+.cmp > div{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.cmp > div.win{border:2px solid var(--good)}
+.cmp h3{font-family:var(--display);font-size:15px;margin:0 0 6px}
+.cmp .line{font-size:14px}
+.note{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:70ch}
+
+table.ptype th,table.ptype td{white-space:normal;text-align:left;vertical-align:top;min-width:150px}
+table.ptype td:first-child{font-weight:600;min-width:120px}
+table.ptype .sel{background:var(--soft)}
+table.ptype .yours{display:inline-block;margin-left:8px;font-family:var(--body);font-size:11px;font-weight:600;background:var(--accent);color:var(--panel);border-radius:999px;padding:1px 8px;vertical-align:2px}
+/* form polish */
+.inputs,.inputs *{overflow-anchor:none}
+.inputs{padding:20px}
+.grp{padding:16px 0 4px;border-top:1px solid var(--line)}
+.grp:first-child{border-top:0;padding-top:2px}
+.gh{font-family:var(--display);font-weight:700;font-size:15.5px;letter-spacing:-.005em;margin:0 0 12px}
+.inputs .f{margin-bottom:14px}
+.inputs .f label{font-size:13.5px;color:var(--ink);align-items:center}
+.inputs .inp{height:40px;background:var(--bg);transition:border-color .15s}
+.inputs .inp:hover{border-color:var(--muted)}
+.inputs .inp span{min-width:38px;justify-content:center;font-size:13.5px}
+.inputs .inp input{font-size:15px}
+.inputs .hint{font-size:12.3px}
+.inputs .seg button{min-height:38px}
+.banner{font-size:13px;line-height:1.45}
+details.more{border:1px solid var(--line);border-radius:12px;margin-top:10px;padding:0;background:var(--panel)}
+details.more>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:11px;background:var(--soft);font-family:var(--body);font-weight:400;font-size:15px}
+details.more[open]>summary{border-radius:11px 11px 0 0;border-bottom:1px solid var(--line)}
+.more-inner{padding:0 14px 4px}
+.more-inner .grp:first-child{border-top:1px solid var(--line);padding-top:16px;margin-top:12px}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary b{display:block;font-family:var(--display);font-size:15.5px}
+details.more>summary small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;margin-top:2px}
+details.more:hover{border-color:var(--muted)}
+details.more>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chev{flex:none;width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s}
+details.more[open]>summary .chev{transform:rotate(-135deg) translate(-2px,-2px)}
+details.more[open]>summary{margin-bottom:0}
+.taxnote{font-size:13px !important;color:var(--muted);margin:-4px 0 10px !important}
+@media (prefers-reduced-motion: reduce){.chev,.inputs .inp{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <h1>Buy a house or rent?</h1>
+  <p class="intro">Enter a few numbers. We'll show which option leaves you with more money after the years you choose, what buying really costs, and how much you save by paying your loan faster.</p>
+
+  <div class="layout">
+    <form class="panel inputs" id="form" autocomplete="off" onsubmit="return false">
+      <div class="banner" role="note">
+        Fields marked <span class="sample">Sample</span> are example values. Replace them with your own.
+        <div class="acts">
+          <button type="button" class="btn" id="clearAll">Clear all</button>
+          <button type="button" class="btn" id="restore">Use sample values</button>
+        </div>
+      </div>
+      <div id="main"></div>
+      <details class="more"><summary><span><b>More options</b><small>Income tax, running costs, affordability, property type</small></span><span class="chev" aria-hidden="true"></span></summary><div class="more-body"><div class="more-inner"><p class="hint" style="margin:12px 0 4px">Sample values are used until you change them.</p><div id="extra"></div></div></div></details>
+    </form>
+
+    <main class="results">
+      <div id="summary" class="results"></div>
+
+      <section class="panel" id="bdSec">
+        <h2>What the house really costs</h2>
+        <p class="section-intro">Every charge you pay, with and without a home loan. Change any rate or amount right in the table.</p>
+        <div class="tablewrap"><table class="bd" id="bd"></table></div>
+        <p class="takeaway" id="bdTake"></p>
+      </section>
+
+      <section class="panel" id="ppSec">
+        <h2>Pay extra on your loan</h2>
+        <p class="section-intro">Paying a little more than your EMI cuts the interest you pay and closes the loan sooner. Enter 0 if you won't pay extra.</p>
+        <div class="ppin" id="ppIn"></div>
+        <div id="ppOut"></div>
+      </section>
+
+      <div id="moreOut" class="results"></div>
+    </main>
+  </div>
+  <footer>An estimate for planning, not financial or tax advice. Charges differ by state, bank and builder; confirm them before you decide.</footer>
+</div>
+<script>
+(function(){
+"use strict";
+const MAIN=[
+  {id:"price",label:"House price",pre:"₹",sample:8000000},
+  {id:"dp",label:"Down payment (if taking a loan)",post:"%",sample:20,hint:"Part of the price you pay yourself. Banks lend the rest."},
+  {id:"loanRate",label:"Home loan interest",post:"% a year",sample:8.5},
+  {id:"tenure",label:"Loan period",post:"years",sample:20,int:true},
+  {id:"rent",label:"Rent for a similar house",pre:"₹",post:"/month",sample:22000},
+  {id:"rentInc",label:"Rent increase each year",post:"%",sample:5},
+  {id:"appr",label:"House price growth each year",post:"%",sample:5,hint:"&nbsp;"},
+  {id:"fdRate",label:"Expected return on investments",post:"% a year",sample:7,hint:"FD, mutual funds, shares, or any mix. Enter the yearly return you realistically expect."},
+  {id:"years",label:"Compare after",post:"years",sample:15,int:true}
+];
+const EXTRA=[
+  {id:"age",label:"Building age today",post:"years",sample:0,int:true,hint:"0 for new or under-construction."},
+  {id:"maint",label:"Maintenance, property tax & repairs",pre:"₹",post:"/year",sample:36000,hint:"Society charges, property tax, plus an average yearly amount for repairs."},
+  {id:"maintInc",label:"Maintenance increase each year",post:"%",sample:5},
+  {id:"room80C",label:"Unused 80C limit",pre:"₹",sample:150000,hint:"Old regime only. What's left of ₹1.5 lakh after PF, insurance etc.",oldOnly:true},
+  {id:"income",label:"Your monthly take-home pay (optional)",pre:"₹",sample:150000,optional:true,hint:"To check if the EMI is affordable."}
+];
+const BD_HOUSE=[
+  {id:"gst",label:"GST",sub:"Only on under-construction homes (usually 5%, or 1% for affordable housing). 0 for ready-to-move.",post:"%",sample:0},
+  {id:"stampPct",label:"Stamp duty",sub:"Set by your state.",post:"%",sample:6},
+  {id:"regPct",label:"Registration fee",sub:"Set by your state; some states cap it.",post:"%",sample:1},
+  {id:"brokPct",label:"Brokerage",sub:"18% GST is added for you. 0 if you buy direct.",post:"%",sample:1},
+  {id:"legal",label:"Lawyer & paperwork",sub:"Title check, agreement drafting.",pre:"₹",sample:15000},
+  {id:"society",label:"Society transfer & advance maintenance",sub:"Membership, corpus fund, maintenance deposit.",pre:"₹",sample:50000},
+  {id:"otherHouse",label:"Parking, club & other builder charges",sub:"Anything added on top of the price.",pre:"₹",sample:0}
+];
+const BD_LOAN=[
+  {id:"procPct",label:"Loan processing fee",sub:"% of the loan. 18% GST is added for you.",post:"%",sample:0.5},
+  {id:"valuation",label:"Bank's legal & valuation fee",sub:"Bank's lawyer and property inspection.",pre:"₹",sample:10000},
+  {id:"modt",label:"Mortgage stamp duty (MODT)",sub:"Charged on the loan in some states.",pre:"₹",sample:10000},
+  {id:"bankOther",label:"CERSAI & other bank charges",sub:"Small registration and admin fees.",pre:"₹",sample:1000},
+  {id:"insurance",label:"Loan insurance",sub:"Optional. Banks often push it; you can say no.",pre:"₹",sample:0}
+];
+const PP=[
+  {id:"exM",label:"Extra every month",pre:"₹",sample:5000},
+  {id:"exY",label:"Extra once a year",pre:"₹",sample:50000,hint:"E.g. from your bonus."},
+  {id:"exStart",label:"Start from year",pre:"Year",sample:1,int:true}
+];
+const ALL=[...MAIN,...EXTRA,...BD_HOUSE,...BD_LOAN,...PP];
+let regime="old", invType="fd";
+const $=id=>document.getElementById(id);
+const fmtIN=new Intl.NumberFormat("en-IN",{maximumFractionDigits:0});
+const inr=n=>"₹"+fmtIN.format(Math.round(n));
+
+function fieldHTML(f){
+  return `<div class="f" id="f-${f.id}" ${f.oldOnly?'data-oldonly="1"':''}><label for="${f.id}">${f.label} <span class="sample">Sample</span></label>
+  <div class="inp">${f.pre?`<span>${f.pre}</span>`:""}<input id="${f.id}" type="text" inputmode="decimal">${f.post?`<span>${f.post}</span>`:""}</div>
+  ${f.hint?`<div class="hint">${f.hint}</div>`:""}</div>`;
+}
+function miniHTML(f){
+  return `<div class="mini" id="f-${f.id}"><div class="inp">${f.pre?`<span>${f.pre}</span>`:""}<input id="${f.id}" type="text" inputmode="decimal" aria-label="${f.label}">${f.post?`<span>${f.post}</span>`:""}</div><span class="sample">Sample</span></div>`;
+}
+const DEF={}; [...MAIN,...EXTRA].forEach(f=>DEF[f.id]=f);
+const F=ids=>ids.map(id=>fieldHTML(DEF[id])).join("");
+const grp=(title,inner,id="")=>`<div class="grp"${id?` id="${id}"`:""}><h3 class="gh">${title}</h3>${inner}</div>`;
+$("main").innerHTML =
+  grp("The house",F(["price","appr"])) +
+  grp("Home loan",F(["dp","loanRate","tenure"])) +
+  grp("Renting",F(["rent","rentInc"])) +
+  grp("Investments and time period",F(["fdRate","years"]));
+$("extra").innerHTML =
+  grp("Income tax",`<div class="f" id="f-regime"><label>Tax regime <span class="sample">Sample</span></label>
+    <div class="seg" role="group" aria-label="Tax regime">
+      <button type="button" data-r="none">Ignore</button><button type="button" data-r="old">Old regime</button><button type="button" data-r="new">New regime</button>
+    </div></div>
+    <div id="slabWrap">${fieldHTML({id:"slab",label:"Your tax slab (with cess)",post:"%",hint:"30% slab + 4% cess = 31.2%"})}</div>
+    ${F(["room80C"])}
+    <div class="f" id="f-invType"><label>How your investments are taxed <span class="sample">Sample</span></label>
+      <div class="seg seg2" role="group" aria-label="Investment type">
+        <button type="button" data-i="fd">FD, RD, bonds</button><button type="button" data-i="eq">Shares, equity mutual funds</button>
+      </div>
+      <div class="hint" id="invHint"></div></div>
+    <div class="f" id="f-cg"><label class="check" style="font-weight:500"><input type="checkbox" id="cg"><span>Count tax on profit if the house is sold at the end <span class="sample">Sample</span></span></label></div>`) +
+  grp("Running costs",F(["maint","maintInc"])) +
+  grp("Affordability",F(["income"])) +
+  grp("Property",F(["age"]),"g-prop");
+ALL.push({id:"slab",label:"Your tax slab",sample:31.2,taxOnly:true});
+const PTYPES={flat:"Flat in high-rise",floor:"Builder floor",house:"Independent house"};
+const TYPEHINT={
+  flat:"How fast you expect this flat's price to rise. In a high-rise you own only a small share of the land, so value depends more on the building and usually grows slower as it ages.",
+  floor:"How fast you expect this floor's price to rise. A builder floor comes with a bigger share of land than a flat, so value usually holds up better as the building ages.",
+  house:"How fast you expect this house's price to rise. You own the full land, which usually holds value best, even as the building ages."
+};
+let ptype="flat";
+$("f-age").insertAdjacentHTML("beforebegin",`<div class="f" id="f-ptype"><label>Property type <span class="sample">Sample</span></label>
+  <div class="seg" role="group" aria-label="Property type">${Object.entries(PTYPES).map(([k,l])=>`<button type="button" data-p="${k}">${l}</button>`).join("")}</div>
+  <div class="hint">Used for guidance only. It doesn't change the numbers.</div></div>`);
+document.querySelectorAll("#f-ptype .seg button").forEach(b=>b.addEventListener("click",()=>{ptype=b.dataset.p;$("f-ptype").classList.add("edited");syncType();run();}));
+function syncType(){
+  document.querySelectorAll("#f-ptype .seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.p===ptype)));
+  $("f-appr").querySelector(".hint").textContent=TYPEHINT[ptype];
+}
+
+const row=(f)=>`<tr><td><label for="${f.id}">${f.label}</label><span class="sub">${f.sub}</span></td><td>${miniHTML(f)}</td><td data-c="${f.id}-0"></td><td data-c="${f.id}-1"></td></tr>`;
+$("bd").innerHTML=`<thead><tr><th>What you pay</th><th>Rate / amount</th><th>Without loan</th><th>With loan</th></tr></thead><tbody>
+  <tr><td>House price<span class="sub">From the form.</span></td><td></td><td data-c="price-0"></td><td data-c="price-1"></td></tr>
+  <tr class="grp"><td colspan="4">Buying charges</td></tr>
+  ${BD_HOUSE.map(row).join("")}
+  <tr class="tot2"><td>Buying charges total</td><td></td><td data-c="house-0"></td><td data-c="house-1"></td></tr>
+  <tr class="grp"><td colspan="4">Loan charges</td></tr>
+  ${BD_LOAN.map(row).join("")}
+  <tr><td>Interest paid to the bank<span class="sub" data-c="intsub"></span></td><td></td><td data-c="int-0"></td><td data-c="int-1"></td></tr>
+  <tr class="tot2"><td>Loan charges total</td><td></td><td data-c="loanAll-0"></td><td data-c="loanAll-1"></td></tr>
+  <tr class="tot"><td>Total cost of the house</td><td></td><td data-c="total-0"></td><td data-c="total-1"></td></tr>
+  <tr><td>Paid on day one<span class="sub">Down payment + all charges, or the full amount.</span></td><td></td><td data-c="day1-0"></td><td data-c="day1-1"></td></tr>
+  <tr><td>Paid later through EMIs<span class="sub" data-c="emisub"></span></td><td></td><td data-c="later-0"></td><td data-c="later-1"></td></tr>
+</tbody>`;
+$("ppIn").innerHTML=PP.map(fieldHTML).join("");
+
+function fill(sample){
+  ALL.forEach(f=>{ $(f.id).value = sample ? (f.pre==="₹"?fmtIN.format(f.sample):String(f.sample)) : ""; $("f-"+f.id).classList.toggle("edited",!sample); });
+  regime = sample?"old":"none"; invType="fd"; $("f-invType").classList.toggle("edited",!sample); $("cg").checked=sample; ptype="flat"; $("f-ptype").classList.toggle("edited",!sample); syncType();
+  $("f-regime").classList.toggle("edited",!sample); $("f-cg").classList.toggle("edited",!sample);
+  syncRegime(); run();
+}
+document.querySelectorAll("#f-invType .seg button").forEach(b=>b.addEventListener("click",()=>{invType=b.dataset.i;$("f-invType").classList.add("edited");syncRegime();run();}));
+function syncRegime(){
+  document.querySelectorAll("#f-invType .seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.i===invType)));
+  $("f-invType").classList.toggle("hide",regime==="none");
+  $("invHint").textContent = invType==="fd" ? "Interest is taxed every year at your slab." : "Taxed only when you sell: 12.5% on gains above ₹1.25 lakh (20% if sold within a year), plus cess.";
+  document.querySelectorAll("#f-regime .seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.r===regime)));
+  $("slabWrap").classList.toggle("hide",regime==="none");
+  $("f-room80C").classList.toggle("hide",regime!=="old");
+  $("f-cg").classList.toggle("hide",regime==="none");
+}
+document.querySelectorAll("#f-regime .seg button").forEach(b=>b.addEventListener("click",()=>{regime=b.dataset.r;$("f-regime").classList.add("edited");syncRegime();run();}));
+$("cg").addEventListener("change",()=>{$("f-cg").classList.add("edited");run();});
+let tm;
+ALL.forEach(f=>{
+  $(f.id).addEventListener("input",()=>{$("f-"+f.id).classList.add("edited");clearTimeout(tm);tm=setTimeout(run,200);});
+  $(f.id).addEventListener("blur",()=>{const n=parseNum($(f.id).value); if(f.pre==="₹"&&n!==null&&!isNaN(n)) $(f.id).value=fmtIN.format(n);});
+});
+$("clearAll").addEventListener("click",()=>fill(false));
+$("restore").addEventListener("click",()=>fill(true));
+function parseNum(s){s=String(s).replace(/[,₹\s]/g,"");if(s==="")return null;const n=Number(s);return isFinite(n)?n:NaN;}
+
+function read(){
+  const v={},missing=[],bad=[];
+  ALL.forEach(f=>{
+    const el=$("f-"+f.id); el.classList.remove("err");
+    const skip=(f.taxOnly&&regime==="none")||(f.oldOnly&&regime!=="old");
+    const n=parseNum($(f.id).value);
+    const nm=f.label;
+    if(n===null){ if(!f.optional&&!skip){missing.push(nm);el.classList.add("err");} v[f.id]=null; return; }
+    if(isNaN(n)||n<0||(f.int&&!Number.isInteger(n))){bad.push(f.label);el.classList.add("err");v[f.id]=null;return;}
+    v[f.id]=n;
+  });
+  [["dp",0,100,"Down payment"],["years",1,40,"Compare after"],["tenure",1,30,"Loan period"],["slab",0,45,"Tax slab"],["stampPct",0,20,"Stamp duty"],["regPct",0,10,"Registration fee"],["gst",0,28,"GST"],["brokPct",0,10,"Brokerage"],["procPct",0,5,"Loan processing fee"],["exStart",1,30,"Start from year"],["age",0,150,"Building age"]].forEach(([k,lo,hi,nm])=>{
+    if(v[k]!=null&&(v[k]<lo||v[k]>hi)){bad.push(`${nm} (${lo}–${hi})`);$("f-"+k).classList.add("err");}});
+  if(v.price===0){bad.push("House price");$("f-price").classList.add("err");}
+  v.regime=regime; v.cg=$("cg").checked; v.invType=invType;
+  if(regime==="none") v.slab=0; if(regime!=="old") v.room80C=0;
+  return {v,missing,bad};
+}
+
+/* ---------- engine ---------- */
+function charges(i){
+  const loan=i.price*(1-i.dp/100);
+  const c={loan, price:i.price,
+    gst:i.price*i.gst/100, stampPct:i.price*i.stampPct/100, regPct:i.price*i.regPct/100, brokPct:i.price*i.brokPct/100*1.18,
+    legal:i.legal, society:i.society, otherHouse:i.otherHouse};
+  c.house=c.gst+c.stampPct+c.regPct+c.brokPct+c.legal+c.society+c.otherHouse;
+  const has=loan>0;
+  c.procPct=has?loan*i.procPct/100*1.18:0; c.valuation=has?i.valuation:0; c.modt=has?i.modt:0; c.bankOther=has?i.bankOther:0; c.insurance=has?i.insurance:0;
+  c.loanFees=c.procPct+c.valuation+c.modt+c.bankOther+c.insurance;
+  return c;
+}
+function emiOf(L,rate,T){ const r=rate/1200; if(L<=0) return 0; return r>0?L*r*Math.pow(1+r,T)/(Math.pow(1+r,T)-1):L/T; }
+function schedule(i,withExtra){
+  const L=charges(i).loan, r=i.loanRate/1200, T=i.tenure*12, emi=emiOf(L,i.loanRate,T);
+  let bal=L,interest=0,m=0,extra=0,emiPaid=0;
+  while(bal>0.5&&m<T){ m++; const it=bal*r, pr=Math.min(emi-it,bal); bal-=pr; interest+=it; emiPaid+=it+pr;
+    if(withExtra&&bal>0.5&&Math.ceil(m/12)>=i.exStart){ let ex=i.exM+(m%12===0?i.exY:0); ex=Math.min(ex,bal); bal-=ex; extra+=ex; } }
+  return {L,emi,interest,months:m,extra,emiPaid,total:emiPaid+extra};
+}
+function simulate(i, apprOverride){
+  const ch=charges(i);
+  const g=(apprOverride ?? i.appr)/100;
+  const r=i.loanRate/1200, T=i.tenure*12, L=ch.loan, emi=emiOf(L,i.loanRate,T);
+  const tax=i.regime==="none"?0:i.slab/100;
+  const rm=Math.pow(1+i.fdRate/100,1/12)-1, eq=i.invType==="eq";
+  const sellTax=(c,b,m)=>{ if(!eq||tax===0) return 0; const gain=c-b; if(gain<=0) return 0; return m<=12 ? gain*0.20*1.04 : Math.max(0,gain-125000)*0.125*1.04; };
+  const N=i.years*12;
+  const upLoan=i.price*i.dp/100+ch.house+ch.loanFees, upCash=i.price+ch.house;
+  let bal=L,intY=0,prinY=0,paidEmi=0,maintTotal=0,rentTotal=0,taxSaved=0;
+  let cC=upCash,iCY=0, cD=upLoan,iDY=0,extraD=0, bC=upCash, bD=upLoan;
+  const years=[];
+  const cgTax=(value,months)=>{ if(!i.cg||tax===0) return 0; const gain=value-upCash; if(gain<=0) return 0; return gain*(months>24?0.125*1.04:tax); };
+  for(let m=1;m<=N;m++){
+    const y=Math.ceil(m/12);
+    const maintM=i.maint*Math.pow(1+i.maintInc/100,y-1)/12;
+    const rentM=i.rent*Math.pow(1+i.rentInc/100,y-1);
+    let payM=0;
+    if(m<=T&&bal>0.005){
+      const it=bal*r, pr=Math.min(emi-it,bal); payM=it+pr; bal-=pr; intY+=it; prinY+=pr;
+      if(bal>0.005&&y>=i.exStart){ let ex=i.exM+(m%12===0?i.exY:0); ex=Math.min(ex,bal); bal-=ex; prinY+=ex; payM+=ex; }
+    }
+    paidEmi+=payM; maintTotal+=maintM; rentTotal+=rentM;
+    const ic=cC*rm; cC+=ic; iCY+=ic;
+    const id=cD*rm; cD+=id; iDY+=id;
+    const diff=payM+maintM-rentM;
+    if(diff>=0){ cD+=diff; bD+=diff; } else { const need=-diff; if(cD>=need){ bD-=cD>0?bD*need/cD:0; cD-=need; } else { extraD+=need-cD; cD=0; bD=0; } }
+    if(m%12===0){
+      if(i.regime==="old") taxSaved+=(Math.min(intY,200000)+Math.min(prinY,i.room80C))*tax;
+      if(!eq){ cC-=iCY*tax; cD-=iDY*tax; } intY=prinY=iCY=iDY=0;
+      const value=i.price*Math.pow(1+g,y), cg=cgTax(value,m);
+      const A={paid:upLoan+paidEmi+maintTotal,wealth:value-bal-cg,credit:taxSaved};
+      const B={paid:upCash+maintTotal,wealth:value-cg,credit:0};
+      const tC=sellTax(cC,bC,m), tD=sellTax(cD,bD,m);
+      const C={paid:upCash+rentTotal,wealth:cC-tC,gross:cC,sellTax:tC,credit:0};
+      const D={paid:upLoan+paidEmi+maintTotal+extraD,wealth:cD-tD,gross:cD,sellTax:tD,credit:0};
+      [A,B,C,D].forEach(s=>s.net=s.wealth+s.credit-s.paid);
+      years.push({y,value,bal,cg,A,B,C,D});
+    }
+  }
+  return {emi,L,ch,upLoan,upCash,years,last:years[years.length-1]};
+}
+function breakeven(i,k1,k2){
+  const f=a=>{const s=simulate(i,a).last;return s[k1].net-s[k2].net;};
+  let lo=-10,hi=30; if(f(lo)>0) return {below:true}; if(f(hi)<0) return {above:true};
+  for(let k=0;k<50;k++){const mid=(lo+hi)/2; if(f(mid)>0) hi=mid; else lo=mid;}
+  return {rate:(lo+hi)/2};
+}
+
+/* ---------- formatting ---------- */
+function lakh(n){
+  const s=n<0?"−":"",a=Math.abs(n);
+  if(a>=1e7) return s+"₹"+(a/1e7).toFixed(2).replace(/\.?0+$/,"")+" crore";
+  if(a>=1e5) return s+"₹"+(a/1e5).toFixed(1).replace(/\.0$/,"")+" lakh";
+  return s+"₹"+fmtIN.format(Math.round(a));
+}
+const pct=n=>(Math.round(n*10)/10)+"%";
+const dur=m=>{const y=Math.floor(m/12),mo=m%12;return [y?`${y} year${y>1?"s":""}`:"",mo?`${mo} month${mo>1?"s":""}`:""].filter(Boolean).join(" ")||"0 months";};
+const SC={
+  A:{name:"Take a home loan",what:"Pay the down payment now, then monthly EMIs.",col:"var(--c-loan)"},
+  B:{name:"Pay full cash",what:"Pay the whole price at once. No loan.",col:"var(--c-cash)"},
+  C:{name:"Rent + invest the full amount",what:"Invest the house money (FD, mutual funds, shares) and live on rent.",col:"var(--c-fd)"},
+  D:{name:"Rent + save the EMI",what:"Invest the down payment. Each month, invest what the EMI would have been, minus rent.",col:"var(--c-rd)"}
+};
+const setC=(k,html)=>{const el=document.querySelector(`[data-c="${k}"]`); if(el) el.innerHTML=html;};
+
+function run(){
+  const {v,missing,bad}=read();
+  if(missing.length||bad.length){
+    $("summary").innerHTML=`<section class="panel"><h2>A few numbers are missing</h2>
+      ${missing.length?`<p>Please fill in: <b>${missing.join(", ")}</b>.</p>`:""}
+      ${bad.length?`<p>Please check: <b>${bad.join(", ")}</b>.</p>`:""}
+      <p class="howread">Some may be under “More options”, in the cost table, or in the extra-payment section. Use 0 where something doesn't apply.</p></section>`;
+    document.querySelectorAll("[data-c]").forEach(e=>e.textContent="—");
+    $("bdTake").textContent="Fill in all numbers to see the full cost."; $("ppOut").innerHTML=""; $("moreOut").innerHTML="";
+    return;
+  }
+  const s=simulate(v),L=s.last,n=v.years,keys=["A","B","C","D"];
+  renderSummary(v,s,L,n,keys);
+  renderBreakdown(v,s);
+  renderPrepay(v);
+  renderMore(v,s,L,n,keys);
+}
+
+function renderSummary(v,s,L,n,keys){
+  const best=[...keys].sort((a,b)=>L[b].net-L[a].net)[0];
+  const loanBest=L.A.net>=L.D.net?"A":"D", cashBest=L.B.net>=L.C.net?"B":"C";
+  const yrs=`${n} year${n>1?"s":""}`;
+  const why={
+    A:`The property is expected to gain value faster than what the loan costs you.`,
+    B:`You avoid loan interest, and the house grows faster than your investments would${v.regime!=="none"?" after tax":""}.`,
+    C:`Your investments grow your money faster than the house price would.`,
+    D:`The house won't grow fast enough to cover the loan interest. Renting and saving the difference wins, but only if you actually save it every month.`
+  }[best];
+  const alt=(best==="B"||best==="C")
+    ?`<p class="alt"><b>Don't have the full amount?</b> Then ${loanBest==="A"?"taking a home loan is better than renting":"renting and saving the EMI amount is better than taking a loan"}, by ${lakh(Math.abs(L.A.net-L.D.net))}.</p>`
+    :`<p class="alt"><b>Already have the full amount in cash?</b> Then ${cashBest==="B"?"paying full cash is better than investing that money":"investing that money and renting is better than buying"}, by ${lakh(Math.abs(L.B.net-L.C.net))}.</p>`;
+  const cards=keys.map(k=>{
+    const x=L[k],isBest=k===best; let have;
+    if(k==="A") have=`<div class="line"><span>House worth</span><span>${lakh(L.value)}</span></div><div class="line"><span>Loan still left</span><span>${L.bal>1?"−"+lakh(L.bal):"Paid off"}</span></div>${x.credit>0?`<div class="line"><span>Tax saved on loan</span><span>${lakh(x.credit)}</span></div>`:""}`;
+    else if(k==="B") have=`<div class="line"><span>House worth</span><span>${lakh(L.value)}</span></div>`;
+    else have=`<div class="line"><span>Investments worth</span><span>${lakh(x.gross)}</span></div>${x.sellTax>0?`<div class="line"><span>Tax if sold</span><span>−${lakh(x.sellTax)}</span></div>`:""}`;
+    if((k==="A"||k==="B")&&L.cg>0) have+=`<div class="line"><span>Tax if sold</span><span>−${lakh(L.cg)}</span></div>`;
+    return `<article class="opt ${isBest?"best":""}" style="--c:${SC[k].col}">
+      <h3>${SC[k].name}${isBest?'<span class="badge">Best</span>':""}</h3><p class="what">${SC[k].what}</p>
+      <div class="line"><span>You pay in total</span><span>${lakh(x.paid)}</span></div>${have}
+      <div class="res"><span>${x.net>=0?"You gain":"You lose"}</span><b class="${x.net>=0?"pos":"neg"}">${lakh(Math.abs(x.net))}</b></div></article>`;
+  }).join("");
+  $("summary").innerHTML=`
+  <section class="panel answer"><p class="label">Best choice for you</p><p class="pick">${SC[best].name}</p>
+    <p class="taxnote">${v.regime==="none"?"Taxes ignored.":`Calculated with the ${v.regime} tax regime at a ${pct(v.slab)} slab, investments taxed as ${v.invType==="eq"?"shares/equity funds":"FD/RD/bonds"}.`} Change it under More options.</p>
+    <p>After ${yrs}, this leaves you <b class="${L[best].net>=0?"pos":"neg"}">${lakh(Math.abs(L[best].net))} ${L[best].net>=0?"ahead":"behind"}</b> of the money you put in. ${why}</p>${alt}</section>
+  <section><h2>All 4 options after ${yrs}</h2>
+    <p class="howread" style="margin-bottom:12px"><b>You gain/lose</b> = what you'll have at the end − everything you paid (including all buying and loan charges below).</p>
+    <div class="grid">${cards}</div></section>`;
+}
+
+function renderBreakdown(v,s){
+  const c=s.ch, hasLoan=c.loan>0, sch=schedule(v,true), base=schedule(v,false);
+  const na='<span class="na">—</span>';
+  setC("price-0",inr(c.price)); setC("price-1",inr(c.price));
+  BD_HOUSE.forEach(f=>{const x=c[f.id]; setC(f.id+"-0",x?inr(x):na); setC(f.id+"-1",x?inr(x):na);});
+  setC("house-0",inr(c.house)); setC("house-1",inr(c.house));
+  BD_LOAN.forEach(f=>{setC(f.id+"-0",na); setC(f.id+"-1",c[f.id]?inr(c[f.id]):na);});
+  const extraOn=sch.extra>0;
+  setC("intsub", hasLoan?`On a loan of ${lakh(c.loan)} at ${pct(v.loanRate)}${extraOn?", with your extra payments":""}.`:"No loan.");
+  setC("int-0",na); setC("int-1",hasLoan?inr(sch.interest):na);
+  const loanAll=c.loanFees+sch.interest;
+  setC("loanAll-0",na); setC("loanAll-1",hasLoan?inr(loanAll):na);
+  const t0=c.price+c.house, t1=t0+loanAll;
+  setC("total-0",inr(t0)); setC("total-1",inr(t1));
+  setC("day1-0",inr(t0)); setC("day1-1",inr(s.upLoan));
+  setC("emisub",hasLoan?`EMI ${inr(sch.emi)}/month${extraOn?" plus your extra payments":""}, for ${dur(sch.months)}.`:"");
+  setC("later-0",na); setC("later-1",hasLoan?inr(sch.total):na);
+  $("bdTake").innerHTML = `Buying charges add <b>${lakh(c.house)}</b> (${pct(c.house/c.price*100)} of the price) whether or not you take a loan. `+
+    (hasLoan?`A loan makes the house cost <b>${lakh(loanAll)} more</b> in total, mostly interest. Instead of ${lakh(t0)} upfront, you pay ${lakh(s.upLoan)} now and the rest over ${dur(sch.months)}.`:`With a 100% down payment there are no loan costs.`);
+}
+
+function renderPrepay(v){
+  const base=schedule(v,false), ex=schedule(v,true);
+  if(base.L<=0){ $("ppOut").innerHTML=`<p class="note">There's no loan with a 100% down payment.</p>`; return; }
+  const saved=base.interest-ex.interest, early=base.months-ex.months;
+  const head = ex.extra>0
+    ? `You save <span class="pos">${lakh(saved)}</span> in interest and finish the loan ${early>0?`<span class="pos">${dur(early)}</span> early`:"on time"}.`
+    : `Enter an extra amount to see how much interest you'd save.`;
+  const box=(title,sc,win)=>`<div class="${win?"win":""}"><h3>${title}</h3>
+    <div class="line"><span>EMI</span><span>${inr(sc.emi)}</span></div>
+    <div class="line"><span>Extra paid</span><span>${sc.extra?lakh(sc.extra):"—"}</span></div>
+    <div class="line"><span>Loan closes in</span><span>${dur(sc.months)}</span></div>
+    <div class="line"><span>Interest paid</span><span>${lakh(sc.interest)}</span></div>
+    <div class="line"><span>Total paid to bank</span><span>${lakh(sc.total)}</span></div></div>`;
+  $("ppOut").innerHTML=`<p class="big">${head}</p>
+    <div class="cmp">${box("Only EMI",base,false)}${box("EMI + extra",ex,ex.extra>0)}</div>
+    <p class="note">Your EMI stays the same; the loan just ends sooner. RBI rules don't allow banks to charge a penalty for prepaying a floating-rate home loan taken by an individual (fixed-rate loans can have charges, so check with your bank). These extra payments are included in the comparison above, and the “Rent + save the EMI” option saves the same amount.</p>`;
+}
+
+function renderMore(v,s,L,n,keys){
+  const tips=[];
+  const be=breakeven(v,"A","D");
+  const endAge=v.age+n;
+  if(be.rate!=null) tips.push(`Buying on a loan only makes sense if house prices in your area rise by more than <b>${pct(be.rate)} a year</b>. You entered ${pct(v.appr)}.`);
+  else if(be.above) tips.push(`<span class="flag">Even if house prices rose 30% a year, buying on a loan wouldn't beat renting and saving the EMI here.</span>`);
+  else if(be.below) tips.push(`Buying on a loan beats renting and saving the EMI here even if house prices fall.`);
+  if(v.age>=15&&s.L>0) tips.push(`<span class="flag">The building is ${v.age} years old. Banks often shorten the loan period or lend less for older buildings, based on how many years the building has left. Confirm the loan period with your bank.</span>`);
+  if(endAge>=25) tips.push(`The building will be ${endAge} years old at the end. Older buildings need bigger repairs (waterproofing, plumbing, wiring), so keep the yearly maintenance amount realistic.`);
+  if(ptype==="flat"&&endAge>=25) tips.push(`Older flats in some cities get redeveloped, which can raise their value a lot. That's hard to predict and isn't counted here.`);
+  if(v.income&&s.emi>0){const r=s.emi/v.income*100;
+    tips.push(`<span class="${r>40?"flag":""}">Your EMI would be <b>${lakh(s.emi)}/month</b>, which is ${pct(r)} of your take-home pay. ${r>50?"That's too high; try a bigger down payment or a cheaper house.":r>40?"That's on the high side; keep 6 months of expenses as backup.":"That's comfortable."}</span>`);}
+  else if(s.emi>0) tips.push(`Your EMI would be <b>${lakh(s.emi)}/month</b>.`);
+  if(n<5) tips.push(`<span class="flag">Over less than 5 years, buying usually loses because buying charges (${lakh(s.ch.house)}) take years to recover.</span>`);
+  tips.push(`Money isn't everything. Owning gives you a stable home; renting lets you move easily for work.`);
+  const TROWS=[
+    ["Land you own",{flat:"A small share of the plot",floor:"A bigger share, split among a few floors",house:"The full plot"}],
+    ["Value over time",{flat:"Depends more on the building; growth usually slows as it ages",floor:"Holds up better than a flat as it ages",house:"Usually holds value best; land keeps its worth even as the building ages"}],
+    ["Upkeep",{flat:"Monthly society charges; lifts and common areas",floor:"Low society charges; repairs shared with other floors",house:"No society charges, but every repair is yours"}],
+    ["Selling later",{flat:"Usually easiest, with many similar buyers",floor:"Can take longer; buyers check approvals closely",house:"Depends heavily on location and plot size"}]
+  ];
+  const typeTable=`<div class="tablewrap"><table class="ptype"><thead><tr><th></th>${Object.entries(PTYPES).map(([k,l])=>`<th class="${k===ptype?"sel":""}">${l}${k===ptype?'<span class="yours">Yours</span>':""}</th>`).join("")}</tr></thead>
+    <tbody>${TROWS.map(([lab,o])=>`<tr><td>${lab}</td>${Object.keys(PTYPES).map(k=>`<td class="${k===ptype?"sel":""}">${o[k]}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  $("moreOut").innerHTML=`
+  <section class="panel tips"><h2>Good to know</h2><ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul></section>
+  <section class="panel"><h2>How property type affects value</h2><p class="howread" style="margin-bottom:12px">A general guide to how each type is usually valued. Use it when choosing the house price growth and maintenance numbers. Change the type under More options.</p>${typeTable}</section>
+  <section class="panel"><details id="yrDet"><summary>See year-by-year details</summary>
+    <div class="chart" id="chart"></div>
+    <div class="keys">${keys.map(k=>`<span style="--k:${SC[k].col}">${SC[k].name}</span>`).join("")}</div>
+    <div class="tablewrap" style="margin-top:14px"><table><thead><tr><th>Year</th>${keys.map(k=>`<th>${SC[k].name}</th>`).join("")}</tr></thead>
+    <tbody>${s.years.map(y=>`<tr><td>Year ${y.y}</td>${keys.map(k=>`<td class="${y[k].net>=0?"pos":"neg"}">${y[k].net>=0?"+":""}${lakh(y[k].net)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="small">Each cell shows how much you'd gain or lose if you stopped in that year.</p></details></section>
+  <section class="panel"><details><summary>How it's calculated</summary><ul class="small">
+    <li><b>You pay in total</b> includes the down payment or full price, all buying charges, loan charges, EMIs, extra loan payments, maintenance and rent, whichever apply. For the two rent options it also includes the money you put into the FD.</li>
+    <li>“Rent + invest the full amount” starts with what the cash buyer pays on day one. “Rent + save the EMI” starts with what the loan buyer pays on day one and saves the same monthly amount.</li>
+    <li>The house grows in value at the yearly rate you enter.</li>
+    <li>Investments grow at the yearly return you enter. FD, RD and bonds: returns taxed every year at your slab. Shares and equity mutual funds: taxed once, as if sold at the end, at 12.5% on gains above ₹1.25 lakh (20% within the first year), plus 4% cess. No tax if you choose “Ignore”.</li>
+    <li>Old regime: loan interest deduction up to ₹2 lakh a year plus principal (including extra payments) under 80C. New regime: no loan benefit for a home you live in.</li>
+    <li>Tax if sold: 12.5% + 4% cess on the profit after 2 years. The cost counted is the price plus buying charges.</li>
+    <li>Property type and building age give guidance and tips only; they don't change the numbers.</li>
+    <li>Not included: security deposit for renting, home insurance, selling costs, moving costs.</li></ul></details></section>`;
+  const det=$("yrDet"); det.addEventListener("toggle",()=>{if(det.open) drawChart(s.years,keys);});
+}
+function drawChart(ys,keys){
+  const host=$("chart"),W=720,H=300,pl=78,pr=14,pt=14,pb=32;
+  const all=ys.flatMap(y=>keys.map(k=>y[k].net)).concat([0]);
+  let lo=Math.min(...all),hi=Math.max(...all); if(hi===lo){hi+=1;lo-=1;} const pd=(hi-lo)*.06; lo-=pd; hi+=pd;
+  const X=i=>pl+(ys.length===1?.5:i/(ys.length-1))*(W-pl-pr), Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);
+  let g="";
+  for(let t=0;t<=4;t++){const v=lo+(hi-lo)*t/4,y=Y(v);
+    g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-8}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--muted)">${lakh(v)}</text>`;}
+  g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.4" opacity=".7"/>`;
+  const ev=Math.ceil(ys.length/10);
+  ys.forEach((y,i)=>{if(i%ev===0||i===ys.length-1)g+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="11" fill="var(--muted)">Yr ${y.y}</text>`;});
+  keys.forEach(k=>{g+=`<path d="${ys.map((y,i)=>`${i?"L":"M"}${X(i).toFixed(1)},${Y(y[k].net).toFixed(1)}`).join("")}" fill="none" stroke="${SC[k].col}" stroke-width="2.6" stroke-linejoin="round"/>`;});
+  g+=`<line id="hl" y1="${pt}" y2="${H-pb}" stroke="var(--muted)" stroke-dasharray="3 3" visibility="hidden"/><rect id="hit" x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}" fill="transparent"/>`;
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gain or loss each year for each option">${g}</svg><div class="tip" id="tip"></div>`;
+  const svg=host.querySelector("svg"),tip=$("tip"),hl=$("hl"),hit=$("hit");
+  const move=e=>{const r=svg.getBoundingClientRect(),cx=e.touches?e.touches[0].clientX:e.clientX,x=(cx-r.left)/r.width*W;
+    const i=Math.max(0,Math.min(ys.length-1,Math.round((x-pl)/(W-pl-pr)*(ys.length-1)))),y=ys[i];
+    hl.setAttribute("x1",X(i));hl.setAttribute("x2",X(i));hl.setAttribute("visibility","visible");
+    tip.innerHTML=`<b>Year ${y.y}</b>`+keys.map(k=>`<div><span style="color:${SC[k].col}">●</span><span style="flex:1">${SC[k].name}</span><span>${lakh(y[k].net)}</span></div>`).join("");
+    tip.style.display="block";const px=X(i)/W*r.width,tw=tip.offsetWidth;tip.style.left=(px+tw+16>r.width?px-tw-10:px+10)+"px";tip.style.top="6px";};
+  hit.addEventListener("mousemove",move);hit.addEventListener("touchstart",move,{passive:true});hit.addEventListener("touchmove",move,{passive:true});
+  hit.addEventListener("mouseleave",()=>{tip.style.display="none";hl.setAttribute("visibility","hidden");});
+}
+fill(true);
+
+/* Sticky left panel, smooth "More options", and no jumps when the form changes height */
+(function(){
+  const el=$("form"), gap=12;
+  const mm=q=>window.matchMedia?window.matchMedia(q):{matches:false,addEventListener(){}};
+  const mq=mm("(min-width:881px)");
+  const raf=window.requestAnimationFrame?window.requestAnimationFrame.bind(window):(f=>setTimeout(f,16));
+  let t=gap, lastY=window.scrollY, freeze=0;
+  const setTop=()=>{ if(mq.matches) el.style.top=t+"px"; else el.style.top=""; };
+  function clamp(){ const h=el.offsetHeight, vh=window.innerHeight; t=Math.max(Math.min(gap,vh-h-gap),Math.min(gap,t)); setTop(); }
+  window.addEventListener("scroll",()=>{ const y=window.scrollY, d=y-lastY; lastY=y; if(freeze||!mq.matches) return; t-=d; clamp(); },{passive:true});
+  window.addEventListener("resize",clamp);
+  mq.addEventListener("change",clamp);
+
+  /* Remember where the thing you clicked sits on screen, and keep it there when the form grows or shrinks */
+  let anchor=null;
+  const mark=e=>{ const a=e.target.closest(".f, details.more>summary, .grp, .mini")||e.target; anchor={el:a, top:a.getBoundingClientRect().top, until:Date.now()+1200}; };
+  el.addEventListener("pointerdown",mark,true);
+  el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" ") mark(e); },true);
+  function hold(){
+    if(!anchor||Date.now()>anchor.until||!anchor.el.isConnected) return;
+    let diff=anchor.el.getBoundingClientRect().top-anchor.top;
+    if(Math.abs(diff)<0.5) return;
+    freeze++;
+    window.scrollBy(0,diff);
+    lastY=window.scrollY;
+    diff=anchor.el.getBoundingClientRect().top-anchor.top;
+    if(Math.abs(diff)>=0.5&&mq.matches){ t-=diff; setTop(); }
+    raf(()=>raf(()=>{ freeze=Math.max(0,freeze-1); lastY=window.scrollY; }));
+  }
+  if("ResizeObserver" in window) new ResizeObserver(()=>{ setTop(); hold(); }).observe(el);
+
+  /* Smooth open/close for More options */
+  const det=document.querySelector("details.more"), sum=det.querySelector("summary"), body=det.querySelector(".more-body");
+  const reduce=()=>mm("(prefers-reduced-motion: reduce)").matches;
+  let busy=false;
+  sum.addEventListener("click",e=>{
+    e.preventDefault(); if(busy) return;
+    const opening=!det.open;
+    if(reduce()){ det.open=opening; return; }
+    busy=true;
+    if(opening){ det.open=true; const h=body.scrollHeight; body.style.overflow="hidden"; body.style.height="0px"; body.offsetHeight; body.style.transition="height .3s cubic-bezier(.2,.7,.2,1)"; body.style.height=h+"px"; }
+    else { const h=body.scrollHeight; body.style.overflow="hidden"; body.style.height=h+"px"; body.offsetHeight; body.style.transition="height .25s cubic-bezier(.4,0,.6,1)"; body.style.height="0px"; }
+    let done=false;
+    const end=()=>{ if(done) return; done=true; if(!opening) det.open=false; body.style.height=""; body.style.overflow=""; body.style.transition=""; hold(); busy=false; };
+    body.addEventListener("transitionend",ev=>{ if(ev.target===body) end(); });
+    setTimeout(end,420);
+  });
+  clamp();
+})();
+})();
+</script>
+</body>
+</html>
