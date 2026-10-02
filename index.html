@@ -3,7 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Buy a house or rent? · India calculator</title>
+<title>Buy a House or Rent? Home Loan vs Rent Calculator (India)</title>
+<meta name="description" content="Free India calculator: compare buying a house on a home loan, paying full cash, or renting and investing. Covers EMI, stamp duty, loan charges, prepayment savings and income tax.">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Vishal">
+<link rel="author" href="https://www.gvishal.com/">
+<meta name="theme-color" content="#EDF3F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1920" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
+<!-- After deploying, replace https://YOUR-SITE-URL/ below with the page's real address (keep the trailing slash). -->
+<link rel="canonical" href="https://YOUR-SITE-URL/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_IN">
+<meta property="og:site_name" content="Buy vs Rent Calculator">
+<meta property="og:title" content="Buy a House or Rent? Home Loan vs Rent Calculator (India)">
+<meta property="og:description" content="Free India calculator: compare buying a house on a home loan, paying full cash, or renting and investing. Covers EMI, stamp duty, loan charges, prepayment savings and income tax.">
+<meta property="og:url" content="https://YOUR-SITE-URL/">
+<meta property="og:image" content="https://YOUR-SITE-URL/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Buy a house or rent? Calculator for India">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Buy a House or Rent? Home Loan vs Rent Calculator (India)">
+<meta name="twitter:description" content="Free India calculator: compare buying a house on a home loan, paying full cash, or renting and investing. Covers EMI, stamp duty, loan charges, prepayment savings and income tax.">
+<meta name="twitter:image" content="https://YOUR-SITE-URL/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Buy a House or Rent? Calculator (India)",
+  "url": "https://YOUR-SITE-URL/",
+  "description": "Free India calculator: compare buying a house on a home loan, paying full cash, or renting and investing. Covers EMI, stamp duty, loan charges, prepayment savings and income tax.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": "en-IN",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+  "author": { "@type": "Person", "name": "Vishal", "url": "https://www.gvishal.com/" }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -110,7 +149,11 @@ thead th{font-family:var(--display);font-size:14px;border-bottom:2px solid var(-
 .keys span::before{content:"";display:inline-block;width:14px;height:3px;background:var(--k);margin-right:6px;vertical-align:middle}
 .small{font-size:13.5px;color:var(--muted)}
 .small li{margin-bottom:6px}
-footer{margin-top:26px;font-size:12.5px;color:var(--muted);max-width:76ch}
+footer{margin-top:26px;font-size:12.5px;color:var(--muted);max-width:76ch;border-top:1px solid var(--line);padding-top:14px}
+footer p{margin:0 0 6px}
+footer .credit{font-size:13.5px;color:var(--ink)}
+footer a{color:var(--accent);font-weight:600;text-underline-offset:3px}
+footer a:hover{text-decoration-thickness:2px}
 /* breakdown + prepay */
 .section-intro{color:var(--muted);font-size:14.5px;margin:-4px 0 14px;max-width:64ch}
 table.bd td,table.bd th{vertical-align:middle}
@@ -214,7 +257,11 @@ details.more[open]>summary{margin-bottom:0}
       <div id="moreOut" class="results"></div>
     </main>
   </div>
-  <footer>An estimate for planning, not financial or tax advice. Charges differ by state, bank and builder; confirm them before you decide.</footer>
+  <noscript><p class="panel" style="margin-top:20px">This calculator needs JavaScript. Please enable it in your browser to compare buying a house with a home loan, paying full cash, or renting and investing.</p></noscript>
+  <footer>
+    <p>An estimate for planning, not financial or tax advice. Charges differ by state, bank and builder; confirm them before you decide.</p>
+    <p class="credit">Developed by <a href="https://www.gvishal.com/" target="_blank" rel="author noopener">Vishal</a></p>
+  </footer>
 </div>
 <script>
 (function(){
