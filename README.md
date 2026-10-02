@@ -1,6 +1,6 @@
 # Rent vs Buy Calculator (India)
 
-### 👉 [Open the calculator](https://YOUR-USERNAME.github.io/YOUR-REPO/)
+### 👉 [Open the calculator](https://svishalgarg.github.io/buy-vs-rent/)
 
 Compare buying a house on a home loan, paying full cash, or renting and investing.
 Includes EMI, stamp duty, loan charges, prepayment savings and income tax (old vs new regime).
